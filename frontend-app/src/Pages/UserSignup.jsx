@@ -1,29 +1,52 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { UserDataContext } from "../context/UserContext";
 
 const UserSignup = () => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [userData, setUserData] = useState({});
+  const navigate = useNavigate();
+ const [user, setUser] = useContext(UserDataContext);
 
-   const submitHandler = (e) => {
-     e.preventDefault();
-     setUserData({
-       fullname: {
-         firstName: firstName,
-         lastName: lastName,
-       },
-       email: email,
-       password: password,
-     });
-     console.log(userData);
-     setEmail("");
-     setPassword("");
-     setFirstName("");
-     setLastName("");
-   };
+  const submitHandler = async (e) => {
+    e.preventDefault();
+
+    const newUser = {
+      fullname: {
+        firstname: firstName,
+        lastname: lastName,
+      },
+      email: email,
+      password: password,
+    };
+
+ try {
+   const response = await axios.post(
+     `${import.meta.env.VITE_BASE_URL}/users/register`,
+     newUser
+   );
+
+     localStorage.setItem("token", response.data.token);
+     setUser(response.data.user);
+    navigate("/home");
+   // Success handling
+ } catch (error) {
+   // Display the error message from the backend
+   console.error(
+     "Registration failed:",
+     error.response?.data?.message || error.message
+   );
+   // Optionally, show the error to the user
+   alert(
+     error.response?.data?.message || "Registration failed. Please try again."
+   );
+ }
+
+  };
 
   return (
     <div>
@@ -36,7 +59,7 @@ const UserSignup = () => {
             <div className="flex gap-4 mb-6">
               <input
                 required
-                className="bg-[#eeeeee] w-1/2 rounded px-4 py-2  text-lg placeholder:text-base"
+                className="bg-[#eeeeee] w-1/2 rounded px-4 py-2 text-lg placeholder:text-base"
                 type="text"
                 placeholder="First name"
                 value={firstName}
@@ -44,7 +67,7 @@ const UserSignup = () => {
               />
               <input
                 required
-                className="bg-[#eeeeee] w-1/2 rounded px-4 py-2  text-lg placeholder:text-base"
+                className="bg-[#eeeeee] w-1/2 rounded px-4 py-2 text-lg placeholder:text-base"
                 type="text"
                 placeholder="Last name"
                 value={lastName}
@@ -55,7 +78,7 @@ const UserSignup = () => {
             <h3 className="text-base font-medium mb-2">What's your email</h3>
             <input
               required
-              className="bg-[#eeeeee] mb-6 rounded px-4 py-2  w-full text-lg placeholder:text-base"
+              className="bg-[#eeeeee] mb-6 rounded px-4 py-2 w-full text-lg placeholder:text-base"
               type="email"
               placeholder="email@example.com"
               value={email}
@@ -65,7 +88,7 @@ const UserSignup = () => {
             <h3 className="text-lg font-medium mb-2">Enter Password</h3>
             <input
               required
-              className="bg-[#eeeeee] mb-6 rounded px-4 py-2  w-full text-lg placeholder:text-base"
+              className="bg-[#eeeeee] mb-6 rounded px-4 py-2 w-full text-lg placeholder:text-base"
               type="password"
               placeholder="password"
               value={password}
@@ -76,14 +99,14 @@ const UserSignup = () => {
               className="bg-[#111] text-white font-semibold mb-3 rounded px-4 py-2 w-full text-lg"
               type="submit"
             >
-              Login
+              Create New Account
             </button>
           </form>
 
           <p className="text-center">
-            New here?{" "}
-            <Link to="/signup" className="text-blue-600">
-              Create new Account
+            Already have an account?{" "}
+            <Link to="/login" className="text-blue-600">
+              Login here
             </Link>
           </p>
         </div>

@@ -1,36 +1,54 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { CaptainDataContext } from "../context/CaptainContext";
 
-const UserLogin = () => {
+const CaptainLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [userData, setUserData] = useState({});
+  const { captain, setCaptain } = useContext(CaptainDataContext);
+  const navigate = useNavigate();
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
-    setUserData({
+
+    const captain = {
       email: email,
       password: password,
-    });
-    console.log(userData);
-    setEmail("");
-    setPassword("");
+    };
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/captains/login`,
+        captain
+      );
+
+      if (response.status === 200) {
+        const data = response.data;
+        setCaptain(data.captain);
+        localStorage.setItem("token", data.token);
+        navigate("/captain-home");
+      }
+
+      setEmail("");
+      setPassword("");
+    } catch (error) {
+      console.error(
+        "Login failed:",
+        error.response?.data?.message || error.message
+      );
+    }
   };
 
   return (
     <div className="p-7 h-screen flex flex-col justify-between bg-white">
       <img
-  className="w-16 mb-10"
-  src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Uber_logo_2018.svg/2560px-Uber_logo_2018.svg.png"
-  alt="Uber Logo"
-/>
-      <div>
-        <img
-          className="w-16 mb-10"
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYy-OIkAG"
-          alt="Uber Logo"
-        />
+        className="w-16 mb-10"
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Uber_logo_2018.svg/2560px-Uber_logo_2018.svg.png"
+        alt="Uber Logo"
+      />
 
+      <div>
         <form onSubmit={(e) => submitHandler(e)}>
           <div className="mb-6">
             <label className="block mb-2">What's your email</label>
@@ -68,7 +86,7 @@ const UserLogin = () => {
       <p className="text-center">
         New here?{" "}
         <Link to="/captain-signup" className="text-blue-600">
-         Register as captain
+          Register as captain
         </Link>
       </p>
 
@@ -84,4 +102,4 @@ const UserLogin = () => {
   );
 };
 
-export default UserLogin;
+export default CaptainLogin;

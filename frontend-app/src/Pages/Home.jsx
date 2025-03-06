@@ -1,31 +1,20 @@
 import React from "react";
-import { Link } from "react-router-dom";
 
 const Home = () => {
   return (
-    <div className="flex flex-col h-screen">
-      <div
-        className="flex-1 bg-cover bg-center"
-        style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1494522855154-9297ac14b55f?q=80')",
-        }}
-      >
-        <div className="pt-6 pl-6">
-          <h1 className="text-3xl font-bold text-white">Uber</h1>
-        </div>
-      </div>
-      <div
-        className="bg-white p-6 rounded-t-lg shadow-lg"
-        style={{ marginTop: "-20px" }}
-      >
-        <h2 className="text-3xl font-bold mb-4">Get Started with Uber</h2>
-        <Link
-          to="/login"
-          className="flex items-center justify-center w-full bg-black text-white py-3 font-medium rounded"
-        >
-          Continue
-        </Link>
+    <div>
+      <img
+        className="w-16 absolute left-5 top-5"
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Uber_logo_2018.svg/2560px-Uber_logo_2018.svg.png"
+        alt="Uber Logo"
+      />
+      <div className="h-screen w-screen">
+        {/* Static map image as placeholder */}
+        <img
+          className="h-full w-full object-cover"
+          src="https://miro.medium.com/v2/resize:fit:1400/0*gwMx05pqII5hbfmX.gif"
+          alt="Map"
+        />
       </div>
     </div>
   );
